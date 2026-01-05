@@ -26,7 +26,6 @@ const App: React.FC = () => {
   const [generationProgress, setGenerationProgress] = useState({ current: 0, total: 0 });
   const [apiError, setApiError] = useState<string | null>(null);
   
-  // API Key Management State
   const [manualApiKey, setManualApiKey] = useState<string>('');
   const [isApiPanelOpen, setIsApiPanelOpen] = useState(false);
   
@@ -48,7 +47,6 @@ const App: React.FC = () => {
   const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    // Load API Key
     const savedKey = localStorage.getItem('gemini_manual_api_key');
     if (savedKey) setManualApiKey(savedKey);
 
@@ -196,7 +194,7 @@ const App: React.FC = () => {
         
         const newItem: HistoryItem = {
           id: `${Date.now()}-${i}`,
-          text: (chunks.length > 1 ? `[PHẦN ${i+1}] ` : '') + chunks[i].slice(0, 100) + (chunks[i].length > 100 ? "..." : ""),
+          text: (chunks.length > 1 ? `[PHẦN ${i+1}] ` : '') + chunks[i].slice(0, 150) + (chunks[i].length > 150 ? "..." : ""),
           timestamp: Date.now(),
           voice: selectedVoice,
           audioUrl: url,
@@ -245,19 +243,17 @@ const App: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setIsApiPanelOpen(!isApiPanelOpen)}
-              className={`p-2 rounded-xl border transition-all ${isApiPanelOpen ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:text-indigo-600'}`}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-            </button>
-          </div>
+          <button 
+            onClick={() => setIsApiPanelOpen(!isApiPanelOpen)}
+            className={`p-2.5 rounded-xl border transition-all ${isApiPanelOpen ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:text-indigo-600'}`}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          </button>
         </div>
       </header>
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Cột Trái (4/12) */}
+        {/* Cột Trái (4/12) - Cấu hình */}
         <aside className="lg:col-span-4 space-y-8 sticky top-24">
            {isApiPanelOpen && (
              <section className="p-6 bg-indigo-600 rounded-3xl shadow-xl shadow-indigo-100 text-white animate-in zoom-in duration-200">
@@ -268,20 +264,17 @@ const App: React.FC = () => {
                   </button>
                 </div>
                 <div className="space-y-4">
-                  <div className="relative">
-                    <input 
-                      type="password" 
-                      value={manualApiKey}
-                      onChange={(e) => setManualApiKey(e.target.value)}
-                      placeholder="Nhập API Key của bạn..."
-                      className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:bg-white/20 placeholder-white/40"
-                    />
-                  </div>
+                  <input 
+                    type="password" 
+                    value={manualApiKey}
+                    onChange={(e) => setManualApiKey(e.target.value)}
+                    placeholder="Nhập API Key của bạn..."
+                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:bg-white/20 placeholder-white/40"
+                  />
                   <div className="flex gap-2">
                     <button onClick={saveApiKey} className="flex-1 bg-white text-indigo-600 py-2.5 rounded-xl text-xs font-black uppercase tracking-tight hover:bg-indigo-50 transition-colors">Lưu Key</button>
                     <button onClick={() => { setManualApiKey(''); localStorage.removeItem('gemini_manual_api_key'); }} className="px-4 py-2.5 rounded-xl text-xs font-bold text-white/60 hover:text-white transition-colors">Xóa</button>
                   </div>
-                  <p className="text-[9px] text-indigo-200 leading-relaxed font-medium">Lưu ý: API Key sẽ được lưu an toàn tại bộ nhớ trình duyệt (localStorage) của bạn.</p>
                 </div>
              </section>
            )}
@@ -314,13 +307,12 @@ const App: React.FC = () => {
            )}
         </aside>
 
-        {/* Cột Phải (8/12) */}
-        <div className="lg:col-span-8 space-y-6">
-          <section className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 flex flex-col min-h-[480px] overflow-hidden focus-within:ring-2 focus-within:ring-indigo-50 transition-all">
+        {/* Cột Phải (8/12) - Khu vực chính */}
+        <div className="lg:col-span-8 space-y-8">
+          {/* 1. Trình soạn thảo (Full width của cột 8) */}
+          <section className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 flex flex-col min-h-[420px] overflow-hidden focus-within:ring-2 focus-within:ring-indigo-50 transition-all">
             <div className="px-8 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Trình biên tập nội dung</span>
-              </div>
+              <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Trình soạn thảo nội dung</span>
               <div className="flex items-center gap-4">
                 <span className="text-[10px] font-bold text-slate-400">{text.length.toLocaleString()} kí tự</span>
                 <button onClick={() => setText('')} className="text-[10px] font-black text-slate-400 hover:text-red-500 uppercase transition-colors">Dọn sạch</button>
@@ -329,7 +321,7 @@ const App: React.FC = () => {
             
             <textarea
               className="w-full flex-1 p-8 outline-none text-xl text-slate-700 bg-white placeholder-slate-300 resize-none leading-relaxed custom-scrollbar"
-              placeholder="Nhập hoặc dán nội dung vào đây..."
+              placeholder="Nhập nội dung cần chuyển đổi..."
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
@@ -352,13 +344,13 @@ const App: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between items-end px-2">
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-indigo-600 uppercase mb-1 flex items-center gap-2 italic">
-                        Processing Segment {generationProgress.current}/{generationProgress.total}...
+                      <span className="text-[10px] font-black text-indigo-600 uppercase mb-1 flex items-center gap-2 italic animate-pulse">
+                        Đang xử lý phần {generationProgress.current}/{generationProgress.total}...
                       </span>
                       <span className="text-2xl font-black text-slate-800 tabular-nums">{Math.round(progress)}%</span>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] font-black text-slate-400 uppercase mb-1">Dự báo xong sau</span>
+                      <span className="text-[10px] font-black text-slate-400 uppercase mb-1">Thời gian dự kiến</span>
                       <span className="text-xl font-black text-indigo-600">~{estimatedSeconds}s</span>
                     </div>
                   </div>
@@ -370,67 +362,93 @@ const App: React.FC = () => {
             </div>
           </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-            {/* Player (2/5) */}
-            <section className={`md:col-span-2 bg-slate-950 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden transition-all duration-500 border border-slate-900 ${currentAudio ? 'opacity-100' : 'opacity-40 grayscale pointer-events-none'}`}>
-              <div className="absolute inset-0 opacity-10 flex items-center justify-center pointer-events-none">
-                <div className="flex gap-1.5 items-end h-24">
-                  {[...Array(12)].map((_, i) => (
-                    <div key={i} className={`w-1.5 bg-indigo-500 rounded-full transition-all duration-300 ${isPlaying ? 'animate-pulse' : 'h-1'}`} style={{ height: isPlaying ? `${Math.random() * 80 + 20}%` : '4px' }} />
-                  ))}
-                </div>
+          {/* 2. Trình phát nhạc (Bản thu hiện thời - Full width row) */}
+          <section className={`bg-slate-950 rounded-[2rem] p-6 text-white shadow-2xl relative overflow-hidden border border-slate-900 transition-all duration-500 ${currentAudio ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-40 grayscale pointer-events-none'}`}>
+            <div className="absolute inset-0 opacity-10 flex items-center justify-between px-10 pointer-events-none">
+              <div className="flex gap-1.5 items-end h-16">
+                {[...Array(24)].map((_, i) => (
+                  <div key={i} className={`w-1 bg-indigo-500 rounded-full transition-all duration-300 ${isPlaying ? 'animate-pulse' : 'h-1'}`} style={{ height: isPlaying ? `${Math.random() * 80 + 20}%` : '4px', animationDelay: `${i * 0.05}s` }} />
+                ))}
               </div>
-              <div className="relative z-10 space-y-8 text-center">
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Bản thu hiện thời</span>
-                </div>
-                
-                <audio ref={audioRef} src={currentAudio || undefined} onTimeUpdate={onTimeUpdate} onLoadedMetadata={onLoadedMetadata} onEnded={onAudioEnded} className="hidden" />
-                
-                <div className="flex flex-col items-center gap-8">
-                  <button onClick={togglePlay} className="w-20 h-20 bg-white text-slate-900 rounded-full flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-all">
-                    {isPlaying ? <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> : <svg className="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>}
-                  </button>
-                  <div className="w-full space-y-3">
-                    <div className="flex justify-between text-[11px] font-bold text-indigo-400 tabular-nums">
-                      <span>{formatTime(audioCurrentTime)}</span>
-                      <span>{formatTime(audioDuration)}</span>
-                    </div>
-                    <input type="range" min="0" max={audioDuration || 0} step="0.1" value={audioCurrentTime} onChange={handleSeek} className="w-full h-1 bg-white/20 rounded-full appearance-none cursor-pointer accent-indigo-400" />
-                  </div>
-                </div>
-                
-                <button 
-                  onClick={() => history[0] && handleDownload(history[0])} 
-                  className="w-full py-4 bg-white/5 hover:bg-indigo-600 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 border border-white/10 transition-all"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                  Tải Xuống .WAV
-                </button>
+              <div className="flex gap-1.5 items-end h-16 scale-x-[-1]">
+                {[...Array(24)].map((_, i) => (
+                  <div key={i} className={`w-1 bg-indigo-500 rounded-full transition-all duration-300 ${isPlaying ? 'animate-pulse' : 'h-1'}`} style={{ height: isPlaying ? `${Math.random() * 80 + 20}%` : '4px', animationDelay: `${i * 0.05}s` }} />
+                ))}
               </div>
-            </section>
+            </div>
 
-            {/* History (3/5) */}
-            <section className="md:col-span-3 bg-white rounded-[2.5rem] border border-slate-200 shadow-sm flex flex-col min-h-[400px] overflow-hidden">
-              <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <h3 className="font-black text-slate-800 text-[10px] uppercase tracking-widest">Thư viện bản lưu</h3>
-                <button onClick={() => {setHistory([]); setCurrentAudio(null)}} className="text-[9px] font-black text-slate-300 hover:text-red-500 uppercase transition-colors">Xóa hết</button>
-              </div>
+            <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 px-4">
+              <audio ref={audioRef} src={currentAudio || undefined} onTimeUpdate={onTimeUpdate} onLoadedMetadata={onLoadedMetadata} onEnded={onAudioEnded} className="hidden" />
               
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
-                {history.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-slate-300 py-16">
-                    <svg className="w-8 h-8 opacity-10 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Trống</span>
-                  </div>
-                ) : (
-                  history.map((item) => (
-                    <div key={item.id} className={`p-4 rounded-2xl transition-all border ${currentAudio === item.audioUrl ? 'bg-indigo-50 border-indigo-100 shadow-sm' : 'bg-white border-slate-100 hover:border-slate-200'}`}>
-                      <div className="flex justify-between items-start mb-2">
-                        <span className="text-[9px] font-black text-indigo-500 uppercase tracking-tighter bg-indigo-50 px-2 py-0.5 rounded-full">{item.voice}</span>
+              <div className="flex items-center gap-6">
+                <button onClick={togglePlay} className="w-16 h-16 bg-white text-slate-900 rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all shrink-0">
+                  {isPlaying ? <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> : <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>}
+                </button>
+                <div className="hidden md:block">
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Bản thu mới nhất</p>
+                  <p className="text-xs font-bold text-indigo-400">{history[0]?.voice || 'AI Voice'}</p>
+                </div>
+              </div>
+
+              <div className="flex-1 w-full space-y-2">
+                <div className="flex justify-between text-[11px] font-bold text-slate-400 tabular-nums mb-1">
+                  <span>{formatTime(audioCurrentTime)}</span>
+                  <span>{formatTime(audioDuration)}</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="0" 
+                  max={audioDuration || 0} 
+                  step="0.1" 
+                  value={audioCurrentTime} 
+                  onChange={handleSeek} 
+                  className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-indigo-400" 
+                />
+              </div>
+
+              <button 
+                onClick={() => history[0] && handleDownload(history[0])} 
+                className="px-6 py-4 bg-white/5 hover:bg-indigo-600 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center gap-3 border border-white/10 transition-all shrink-0"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                Tải xuống
+              </button>
+            </div>
+          </section>
+
+          {/* 3. Thư viện bản lưu (Grid layout - Dưới cùng) */}
+          <section className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-slate-300"></div>
+                <h3 className="font-black text-slate-800 text-xs uppercase tracking-widest">Lịch sử bản thu ({history.length})</h3>
+              </div>
+              <button 
+                onClick={() => {if(window.confirm('Xóa sạch lịch sử?')){setHistory([]); setCurrentAudio(null)}}} 
+                className="text-[9px] font-black text-slate-400 hover:text-red-500 uppercase transition-colors"
+              >
+                Xóa tất cả
+              </button>
+            </div>
+            
+            <div className="p-8">
+              {history.length === 0 ? (
+                <div className="flex flex-col items-center justify-center text-slate-300 py-16 bg-slate-50/50 rounded-[2rem] border border-dashed border-slate-200">
+                  <svg className="w-12 h-12 opacity-10 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span className="text-[10px] font-black uppercase tracking-widest">Chưa có bản lưu nào</span>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {history.map((item) => (
+                    <div 
+                      key={item.id} 
+                      className={`group p-5 rounded-3xl transition-all border ${currentAudio === item.audioUrl ? 'bg-indigo-50 border-indigo-200 ring-2 ring-indigo-50' : 'bg-white border-slate-100 hover:border-slate-200 hover:shadow-md'}`}
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <span className="text-[9px] font-black text-indigo-500 uppercase tracking-tighter bg-indigo-50/50 px-2.5 py-1 rounded-full">{item.voice}</span>
                         <span className="text-[9px] font-bold text-slate-400">{new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                       </div>
-                      <p className="text-[11px] text-slate-600 line-clamp-1 mb-4 italic">"{item.text}"</p>
+                      <p className="text-[11px] text-slate-600 line-clamp-2 mb-5 italic min-h-[32px]">"{item.text}"</p>
                       <div className="flex gap-2">
                         <button 
                           onClick={() => { 
@@ -443,25 +461,29 @@ const App: React.FC = () => {
                               } 
                             }
                           }} 
-                          className="flex-1 py-2 bg-white rounded-xl text-[9px] font-black text-indigo-600 border border-slate-100 uppercase shadow-sm active:scale-95 transition-all flex items-center justify-center gap-2 hover:bg-slate-50"
+                          className="flex-1 py-2.5 bg-white rounded-xl text-[10px] font-black text-indigo-600 border border-slate-100 uppercase shadow-sm active:scale-95 transition-all flex items-center justify-center gap-2 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600"
                         >
-                          Phát lại
+                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                          Phát
                         </button>
-                        <button onClick={() => handleDownload(item)} className="p-2 bg-white rounded-xl text-slate-400 border border-slate-100 hover:text-indigo-600 transition-all shadow-sm">
+                        <button 
+                          onClick={() => handleDownload(item)} 
+                          className="p-2.5 bg-white rounded-xl text-slate-400 border border-slate-100 hover:text-indigo-600 transition-all shadow-sm active:scale-95"
+                        >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                         </button>
                       </div>
                     </div>
-                  ))
-                )}
-              </div>
-            </section>
-          </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
         </div>
       </main>
       
-      <footer className="max-w-7xl mx-auto w-full px-6 py-10 border-t border-slate-200 text-center">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Gemini AI Voice Studio &bull; Pro Studio 2025</p>
+      <footer className="max-w-7xl mx-auto w-full px-6 py-12 border-t border-slate-200 text-center opacity-50">
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">AI Voice Master &bull; Powered by Gemini 2.5 Flash &bull; 2025</p>
       </footer>
     </div>
   );
