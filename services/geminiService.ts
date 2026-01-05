@@ -5,10 +5,17 @@ import { VoiceName, ProsodySettings } from "../types";
 export async function generateSpeech(
   text: string,
   voice: VoiceName,
-  settings: ProsodySettings
+  settings: ProsodySettings,
+  manualApiKey?: string
 ): Promise<string> {
-  // Sử dụng API_KEY trực tiếp từ môi trường theo quy định
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  // Ưu tiên key thủ công, sau đó đến environment key
+  const apiKey = manualApiKey || (typeof process !== 'undefined' ? process.env.API_KEY : undefined);
+  
+  if (!apiKey) {
+    throw new Error("API Key chưa được cài đặt. Vui lòng nhập API Key ở mục 'Cấu hình Hệ thống'.");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
   
   const prosodyPrompt = `
     HƯỚNG DẪN: 
@@ -39,4 +46,14 @@ export async function generateSpeech(
 
     const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
     if (!base64Audio) {
-      throw new Error("Không có dữ liệu âm thanh trả
+      throw new Error("Không có dữ liệu âm thanh trả về từ API.");
+    }
+    return base64Audio;
+  } catch (error: any) {
+    console.error("Gemini TTS Error:", error);
+    if (error.status === 401 || error.status === 403) {
+      throw new Error("API Key không chính xác hoặc không có quyền truy cập.");
+    }
+    throw error;
+  }
+}

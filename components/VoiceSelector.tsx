@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { VOICES } from '../constants';
 import { VoiceName } from '../types';
@@ -34,8 +33,9 @@ const VoiceSelector: React.FC<VoiceSelectorProps> = ({
                 <span className={`font-bold text-slate-900 transition-colors ${selectedVoice === voice.id ? 'text-blue-700' : ''}`}>
                   {voice.name}
                 </span>
+                {/* Fixed: removed redundant 'Female' check as it's not a valid member of the gender type 'Nam' | 'Nữ' */}
                 <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-tighter ${
-                  voice.gender === 'Nữ' || voice.gender === 'Female' ? 'bg-pink-100 text-pink-600' : 'bg-blue-100 text-blue-600'
+                  voice.gender === 'Nữ' ? 'bg-pink-100 text-pink-600' : 'bg-blue-100 text-blue-600'
                 }`}>
                   {voice.gender}
                 </span>
