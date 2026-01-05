@@ -24,6 +24,7 @@ export interface ProsodySettings {
   pitch: string;
   volume: number;
   emotion: string;
+  language: Language;
 }
 
 export interface UsageStats {
@@ -42,7 +43,7 @@ export interface HistoryItem {
   text: string;
   timestamp: number;
   voice: VoiceName;
-  language?: Language;
+  language: Language;
   audioUrl?: string;
   blob?: Blob;
 }

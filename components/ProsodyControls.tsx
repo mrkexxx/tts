@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { EMOTIONS, PITCH_OPTIONS } from '../constants';
-import { ProsodySettings } from '../types';
+import { ProsodySettings, Language } from '../types';
 
 interface ProsodyControlsProps {
   settings: ProsodySettings;
@@ -33,7 +33,31 @@ const ProsodyControls: React.FC<ProsodyControlsProps> = ({ settings, onChange })
       </h3>
 
       <div className="space-y-6">
-        {/* Emotion Grid */}
+        {/* Language Selection - Visual Cards */}
+        <div className="space-y-3">
+          <label className="text-sm font-bold text-slate-600 uppercase tracking-tight">Ngôn ngữ</label>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { id: Language.Vietnamese, label: 'Tiếng Việt', flag: '🇻🇳' },
+              { id: Language.English, label: 'English', flag: '🇺🇸' }
+            ].map((lang) => (
+              <button
+                key={lang.id}
+                onClick={() => handleChange('language', lang.id)}
+                className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all font-semibold ${
+                  settings.language === lang.id
+                    ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm'
+                    : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200'
+                }`}
+              >
+                <span>{lang.flag}</span>
+                {lang.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Emotion Grid - Improved Visibility */}
         <div className="space-y-3">
           <label className="text-sm font-bold text-slate-600 uppercase tracking-tight">Cảm xúc & Phong thái</label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -54,7 +78,7 @@ const ProsodyControls: React.FC<ProsodyControlsProps> = ({ settings, onChange })
           </div>
         </div>
 
-        {/* Pitch Selection */}
+        {/* Pitch Selection - Segmented Style */}
         <div className="space-y-3">
           <label className="text-sm font-bold text-slate-600 uppercase tracking-tight">Cao độ (Pitch)</label>
           <div className="flex bg-slate-100 p-1 rounded-xl overflow-hidden">
@@ -74,7 +98,7 @@ const ProsodyControls: React.FC<ProsodyControlsProps> = ({ settings, onChange })
           </div>
         </div>
 
-        {/* Speed Control */}
+        {/* Speed Control - Slider with Better Visuals */}
         <div className="space-y-3 pt-2">
           <div className="flex justify-between items-center">
             <label className="text-sm font-bold text-slate-600 uppercase tracking-tight">Tốc độ đọc</label>

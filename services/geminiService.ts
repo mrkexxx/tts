@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Modality } from "@google/genai";
-import { VoiceName, ProsodySettings } from "../types";
+import { VoiceName, ProsodySettings, Language } from "../types";
 
 export async function generateSpeech(
   text: string,
@@ -8,6 +8,7 @@ export async function generateSpeech(
   settings: ProsodySettings,
   apiKey?: string
 ): Promise<string> {
+  // Ưu tiên sử dụng apiKey được truyền vào (từ ô nhập liệu), nếu không có thì dùng process.env.API_KEY
   const finalApiKey = apiKey || process.env.API_KEY;
   
   if (!finalApiKey) {
@@ -16,14 +17,15 @@ export async function generateSpeech(
 
   const ai = new GoogleGenAI({ apiKey: finalApiKey });
   
+  const languageName = settings.language === Language.Vietnamese ? 'Vietnamese' : 'English';
+  
   const prosodyPrompt = `
-    Instructions: Detect the language of the text below and read it naturally.
-    - Emotion/Style: ${settings.emotion}
-    - Speaking Speed: ${settings.speed}x (1.0 is default)
-    - Pitch Level: ${settings.pitch}
+    Read the following text in ${languageName} with these specific characteristics:
+    - Emotion: ${settings.emotion}
+    - Speaking Speed: ${settings.speed}x (where 1.0 is normal)
+    - Pitch: ${settings.pitch}
     
-    Text to read: 
-    ${text}
+    Text: ${text}
   `;
 
   try {
@@ -31,7 +33,6 @@ export async function generateSpeech(
       model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text: prosodyPrompt }] }],
       config: {
-        // responseModalities must be exactly [Modality.AUDIO]
         responseModalities: [Modality.AUDIO],
         speechConfig: {
           voiceConfig: {

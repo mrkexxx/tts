@@ -1,11 +1,11 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { VoiceName, ProsodySettings, HistoryItem, UsageStats } from './types';
+import { VoiceName, ProsodySettings, HistoryItem, Language, UsageStats } from './types';
 import { VOICES } from './constants';
 import VoiceSelector from './components/VoiceSelector';
 import ProsodyControls from './components/ProsodyControls';
 import { generateSpeech } from './services/geminiService';
-import { decodeBase64, createWavBlob } from './utils/audioUtils';
+import { decodeBase64, decodePCMToAudioBuffer, createWavBlob } from './utils/audioUtils';
 import { GoogleGenAI } from "@google/genai";
 
 const DAILY_LIMIT = 50000;
@@ -19,7 +19,8 @@ const App: React.FC = () => {
     speed: 1.0,
     pitch: 'Medium',
     volume: 1.0,
-    emotion: 'Tự nhiên'
+    emotion: 'Tự nhiên',
+    language: Language.Vietnamese
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState({ current: 0, total: 0 });
@@ -88,6 +89,7 @@ const App: React.FC = () => {
     localStorage.setItem('gemini_tts_history', JSON.stringify(historyToSave));
   }, [history]);
 
+  // Hàm chia nhỏ văn bản
   const splitText = (input: string, limit: number): string[] => {
     const chunks: string[] = [];
     let current = input.trim();
@@ -164,7 +166,9 @@ const App: React.FC = () => {
 
   const handlePreviewVoice = async (voiceId: VoiceName) => {
     if (previewingId) return;
-    const previewText = "Xin chào, tôi là AI Voice Studio.";
+    const previewText = settings.language === Language.Vietnamese 
+      ? `Xin chào, tôi là ${voiceId}.` 
+      : `Hello, this is ${voiceId} voice.`;
     
     setPreviewingId(voiceId);
     try {
@@ -203,6 +207,7 @@ const App: React.FC = () => {
       for (let i = 0; i < chunks.length; i++) {
         setGenerationProgress(prev => ({ ...prev, current: i + 1 }));
         const chunk = chunks[i];
+        const partLabel = chunks.length > 1 ? ` (Phần ${i + 1}/${chunks.length})` : '';
         
         const base64Audio = await generateSpeech(chunk, selectedVoice, settings, manualApiKey.trim());
         const audioBytes = decodeBase64(base64Audio);
@@ -214,6 +219,7 @@ const App: React.FC = () => {
           text: (chunks.length > 1 ? `[PHẦN ${i + 1}/${chunks.length}] ` : '') + chunk.slice(0, 60) + "...",
           timestamp: Date.now(),
           voice: selectedVoice,
+          language: settings.language,
           audioUrl: url,
           blob: wavBlob
         };
@@ -221,6 +227,7 @@ const App: React.FC = () => {
         newHistoryItems.push(newItem);
         totalUsageIncrement += chunk.length;
 
+        // Nếu chỉ có 1 phần hoặc là phần cuối cùng, gán làm âm thanh hiện tại để phát
         if (i === chunks.length - 1) {
           setCurrentAudio(url);
           if (audioRef.current) { audioRef.current.src = url; audioRef.current.play(); }
@@ -245,6 +252,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#fcfcfd] flex flex-col">
+      {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -268,6 +276,7 @@ const App: React.FC = () => {
         </div>
       </header>
 
+      {/* Settings Modal */}
       {showSettings && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
            <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-300">
@@ -320,7 +329,9 @@ const App: React.FC = () => {
         </div>
       )}
 
+      {/* Main Content */}
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Editor Side */}
         <div className="lg:col-span-8 space-y-8">
           <section className="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden flex flex-col">
             <div className="px-8 py-4 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
@@ -357,6 +368,7 @@ const App: React.FC = () => {
           </section>
         </div>
 
+        {/* Sidebar Side */}
         <div className="lg:col-span-4 space-y-6">
           <div className="sticky top-24 space-y-6">
             <button
@@ -397,6 +409,7 @@ const App: React.FC = () => {
                 </div>
             </div>
 
+            {/* History List */}
             <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col max-h-[500px]">
               <div className="px-8 py-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/20">
                 <h3 className="font-black text-slate-800 text-xs uppercase tracking-widest">Dự án gần đây</h3>
