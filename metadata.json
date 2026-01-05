@@ -1,0 +1,7 @@
+{
+  "name": "Gemini Voice Studio",
+  "description": "A high-end AI text-to-speech application powered by Gemini 2.5 Flash, featuring advanced prosody controls, emotion selection, and multi-format text processing.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
