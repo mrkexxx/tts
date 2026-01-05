@@ -7,15 +7,10 @@ export enum VoiceName {
   Zephyr = 'Zephyr'
 }
 
-export enum Language {
-  Vietnamese = 'vi-VN',
-  English = 'en-US'
-}
-
 export interface VoiceOption {
   id: VoiceName;
   name: string;
-  gender: 'Male' | 'Female' | 'Nam' | 'Nữ';
+  gender: 'Nam' | 'Nữ';
   description: string;
 }
 
@@ -24,7 +19,6 @@ export interface ProsodySettings {
   pitch: string;
   volume: number;
   emotion: string;
-  language: Language;
 }
 
 export interface UsageStats {
@@ -43,7 +37,6 @@ export interface HistoryItem {
   text: string;
   timestamp: number;
   voice: VoiceName;
-  language: Language;
   audioUrl?: string;
   blob?: Blob;
 }
